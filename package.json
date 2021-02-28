@@ -4,11 +4,12 @@
   "description": "Send pocket articles to kindle",
   "main": "app.js",
   "scripts": {
-		"start": "nodemon main.js"
+    "start": "nodemon main.js"
   },
   "author": "Emad Poursina",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "open": "^7.4.2"
   }
 }
