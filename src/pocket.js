@@ -11,6 +11,8 @@ async function getArticle() {
   try {
     const requestToken = await obtainRequestToken(consumerKey, redirectUri);
 
+    await open(`https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectUri}`);
+
   } catch (error) {
     console.log(new Error(error));
   }
