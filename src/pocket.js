@@ -13,9 +13,35 @@ async function getArticle() {
 
     await open(`https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectUri}`);
 
+    setTimeout(async () => {
+      const accessToken = await obtainAccessToken(consumerKey, requestToken);
+    }, 5000);
   } catch (error) {
     console.log(new Error(error));
   }
+}
+
+/**
+ * 
+ * @param {String} consumerKey 
+ * @param {String} redirectUri 
+ * @returns String - Exchange request token with access token
+ */
+async function obtainAccessToken(consumer_key, requestToken) {
+  const requestUrl = 'https://getpocket.com/v3/oauth/authorize';
+  const requestBody = {
+    consumer_key,
+    code: requestToken,
+  }
+  const option = {
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-Accept': 'application/json'
+    }
+  };
+
+  const data = await makeRequest(requestUrl, requestBody, option);
+  return data.access_token;
 }
 
 /**
