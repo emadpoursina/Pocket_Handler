@@ -28,21 +28,30 @@ async function obtainRequestToken(consumerKey, redirectUri) {
     consumer_key: consumerKey,
     redirect_uri: redirectUri,
   }
-
   const option = {
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
       'X-Accept': 'application/json'
     }
   };
-  
-  const response = await axios.post(requestUrl, requestBody, option)
 
-  if(response.status === 200) {
-    return response.data.code;
-  }else {
-    throw new Error(response.status.toString());
-  }
+  return makeRequest(requestUrl, requestBody, option);
+}
+
+function makeRequest(url, body, option) {
+  return new Promise((resolve, reject) => {
+    axios.post(url, body, option)
+      .then(response => {
+        if(response.status === 200) {
+          resolve(response.data.code);
+        }else {
+          reject(new Error(response.status.toString()));
+        }
+      })
+      .catch(e => {
+        resolve(e);
+      })
+  })
 }
 
 module.exports = getArticle;
