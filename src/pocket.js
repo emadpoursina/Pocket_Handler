@@ -28,12 +28,14 @@ class Pocket {
    */
   async getArticle(filter) {
     try {
+    Object.assign(filter, { consumer_key: this.consumerKey, access_token: this.accessToken })
       const response =  await makeRequest('https://getpocket.com/v3/get', filter, { 'Content-Type': 'application/json' });
 
       console.log(response.data);
     } catch (error) {
       console.log(error);
     }
+    console.log(response);
   }
 }
 
