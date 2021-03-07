@@ -30,6 +30,7 @@ class Pocket {
     Object.assign(filter, { consumer_key: this.consumerKey, access_token: this.accessToken })
 
     const response =  await makeRequest('https://getpocket.com/v3/get', filter, { 'Content-Type': 'application/json' });
+    return response.list;
   }
 }
 
