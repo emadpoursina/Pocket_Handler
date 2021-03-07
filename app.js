@@ -7,7 +7,7 @@ const questions = [
     type: 'rawlist',
     name: 'job',
     message: 'What should I do??',
-    choices: ['1)Get articles', '2)Send to kindle', '3)Get and send article to kindl'],
+    choices: ['1)Get articles', '2)Send to kindle (WireFull)', '3)Get and send article to kindl'],
   },
 ];
 
@@ -41,6 +41,8 @@ async function main() {
       await Promise.all(converters);
 
       console.log('Finished');
+    }else if(choice === '2') {
+
     }
   }
 }
