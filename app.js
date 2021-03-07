@@ -11,21 +11,20 @@ const questions = [
 ];
 
 async function main() {
-  const pocket = await Pocket.build('	96126-d71e8b7e2255a5075eb0c83c', 'https://www.google.com');
+  const pocket = await Pocket.build('96126-d71e8b7e2255a5075eb0c83c', 'https://www.google.com');
 
   console.log('Hi, welcome to Node Pocket app');
 
   while(true) {
     const choice = (await inquirer.prompt(questions)).job[0];
-    switch (choice) {
-      case 1:
-        break;
-      case 2:
-        
-        break;
-      case 3:
-        
-        break;
+    
+    if(choice === '1') {
+      const articles = await pocket.getArticle({
+        count: 1,
+        detailType: 'simple',
+      });
+     console.log(articles);
+     break;
     }
   }
 }
