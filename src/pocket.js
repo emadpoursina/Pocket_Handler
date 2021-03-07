@@ -1,25 +1,26 @@
 const axios = require('axios').default;
 const open = require('open');
 
-const consumerKey = "96126-d71e8b7e2255a5075eb0c83c";
-const redirectUri = "https://www.google.com";
+class Pocket {
+  constructor(consumerKey, redirectUri) {
+    this.consumerKey = consumerKey;
+    this.redirectUri = redirectUri;
 
-/**
- * Return an array of pocket account articles
- */
-async function getArticle() {
-  try {
-    const requestToken = await obtainRequestToken(consumerKey, redirectUri);
+    obtainRequestToken(consumerKey, redirectUri)
+      .then(async requestToken => {
+        await open(`https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectUri}`, {
+          wait: true,
+          app: 'google-chrome',
+        });
 
-    await open(`https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectUri}`);
-
-    setTimeout(async () => {
-      const accessToken = await obtainAccessToken(consumerKey, requestToken);
-    }, 5000);
-  } catch (error) {
-    console.log(new Error(error));
+        return 0;
+      })
+      .then(() => {
+        this.AccessToken = obtainAccessToken(consumerKey, requestToken);
+      })
   }
 }
+
 
 /**
  * 
@@ -96,4 +97,4 @@ function makeRequest(url, body, option) {
   })
 }
 
-module.exports = getArticle;
+module.exports = new Pocket('96126-d71e8b7e2255a5075eb0c83c', 'https://www.google.com');
