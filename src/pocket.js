@@ -5,19 +5,32 @@ class Pocket {
   constructor(consumerKey, redirectUri) {
     this.consumerKey = consumerKey;
     this.redirectUri = redirectUri;
+  }
 
-    obtainRequestToken(consumerKey, redirectUri)
-      .then(async requestToken => {
-        await open(`https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectUri}`, {
-          wait: true,
-          app: 'google-chrome',
-        });
+  static async build(consumerKey, redirectUri) {
+    const requestToken = await obtainRequestToken(consumerKey, redirectUri);
 
-        return 0;
-      })
-      .then(() => {
-        this.AccessToken = obtainAccessToken(consumerKey, requestToken);
-      })
+    await open(`https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectUri}`, {
+      wait: true,
+      app: 'google-chrome',
+    });
+
+    this.AccessToken = await obtainAccessToken(consumerKey, requestToken);
+
+    return new Pocket(consumerKey, redirectUri);
+  }
+
+  /**
+   * 
+   * @param {Object} filter 
+   * @returns Array of articles
+   */
+  async getArticle(filter) {
+    try {
+      return await makeRequest('https://getpocket.com/v3/get', filter, { 'Content-Type': 'application/json' });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
@@ -103,4 +116,4 @@ function makeRequest(url, body, option) {
   })
 }
 
-module.exports = new Pocket('96126-d71e8b7e2255a5075eb0c83c', 'https://www.google.com');
+module.exports = Pocket;
