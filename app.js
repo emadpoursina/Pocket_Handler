@@ -1,5 +1,6 @@
 const Pocket = require('./src/pocket');
 const inquirer = require('inquirer');
+const urlToEpub = require('./src/converter');
 
 const questions = [
   {
@@ -19,12 +20,27 @@ async function main() {
     const choice = (await inquirer.prompt(questions)).job[0];
     
     if(choice === '1') {
-      const articles = await pocket.getArticle({
+      let articles = await pocket.getArticle({
         count: 1,
         detailType: 'simple',
       });
-     console.log(articles);
-     break;
+
+      console.log('Articles received!');
+
+      const converters = []; 
+      let converter;
+
+      articles = Object.values(articles);
+      articles.forEach(article => {
+        converter = urlToEpub(article.resolved_url, {
+          title: article.given_title,
+        });
+        converters.push(converter);
+      });
+
+      await Promise.all(converters);
+
+      console.log('Finished');
     }
   }
 }
