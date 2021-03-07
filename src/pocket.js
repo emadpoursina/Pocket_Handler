@@ -21,7 +21,6 @@ class Pocket {
   }
 }
 
-
 /**
  * 
  * @param {String} consumerKey 
@@ -68,6 +67,13 @@ async function obtainRequestToken(consumerKey, redirectUri) {
   return data.code;
 }
 
+/**
+ * 
+ * @param {String} url 
+ * @param {Object} body 
+ * @param {Object} option 
+ * @returns 
+ */
 function makeRequest(url, body, option) {
   return new Promise((resolve, reject) => {
     axios.post(url, body, option)
