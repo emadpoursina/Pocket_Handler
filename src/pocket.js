@@ -2,9 +2,10 @@ const axios = require('axios').default;
 const open = require('open');
 
 class Pocket {
-  constructor(consumerKey, redirectUri) {
+  constructor(consumerKey, redirectUri, accessToken) {
     this.consumerKey = consumerKey;
     this.redirectUri = redirectUri;
+    this.accessToken = accessToken;
   }
 
   static async build(consumerKey, redirectUri) {
@@ -15,9 +16,9 @@ class Pocket {
       app: 'google-chrome',
     });
 
-    this.AccessToken = await obtainAccessToken(consumerKey, requestToken);
+    const accessToken = await obtainAccessToken(consumerKey, requestToken);
 
-    return new Pocket(consumerKey, redirectUri);
+    return new Pocket(consumerKey, redirectUri, accessToken);
   }
 
   /**
