@@ -27,7 +27,9 @@ class Pocket {
    */
   async getArticle(filter) {
     try {
-      return await makeRequest('https://getpocket.com/v3/get', filter, { 'Content-Type': 'application/json' });
+      const response =  await makeRequest('https://getpocket.com/v3/get', filter, { 'Content-Type': 'application/json' });
+
+      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
