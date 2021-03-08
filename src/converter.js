@@ -18,16 +18,22 @@ const tmpDir = '/tmp/ebookConverter/';
 function urlToMobi(url, outputDir = __dirname + '/../article/') {
   return new Promise((resolve, reject) => {
     getWebPage(url)
-      .then(data => {
-      })
-      .then(
-        () => {
-          resolve('File is ready!');
-        },
-        err => {
-          reject(new Error('Failed to generate Ebook because of ', err));
+      // Make tmp folder
+      .then(dataStream => {
+        console.log(1);
+
+        if (!fs.existsSync(tmpDir)) {
+          fs.mkdir(tmpDir, (err) => {
+            if (err){
+              console.log('Folder creation faild because ' + err);
+              throw new Error('Folder creation faild because ' + err);
+            }
+
+            return dataStream;
+          })
         }
-      )
+        return dataStream;
+      })
   })
 }
 
