@@ -50,6 +50,15 @@ function urlToMobi(url, outputDir = __dirname + '/../article/') {
         console.log(inputDir, outputDir);
         return spawn('ebook-convert', [inputDir, outputDir], options);
       })
+      // Convert file to mobi
+      .then((calibre) => {
+        console.log(3);
+
+        calibre.on('error', (err) => {
+          console.log('Convertion faild: ' + err);
+          throw new Error(err);
+        })
+      })
   })
 }
 
