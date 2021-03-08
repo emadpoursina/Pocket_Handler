@@ -33,10 +33,6 @@ async function main() {
 
       articles = Object.values(articles);
       articles.forEach(article => {
-        converter = urlToEpub(article.resolved_url, {
-          title: article.given_title,
-        }, outputFolder);
-        converters.push(converter);
       });
 
       await Promise.all(converters);

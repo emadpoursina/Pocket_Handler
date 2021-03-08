@@ -11,17 +11,6 @@ function urlToEpub(url, article, outputDir = __dirname + '/../article/') {
   return new Promise((resolve, reject) => {
     getWebPage(url)
       .then(data => {
-        const option = {
-          ...article,
-          content: [{
-            title: 'main',
-            data
-          }]
-        }
-
-        const outputPath = `${outputDir}/${article.title}.epub`;
-
-        return new Epub(option, outputPath).promise;
       })
       .then(
         () => {
