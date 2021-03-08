@@ -1,16 +1,13 @@
-const Epub = require('epub-gen');
 const axios = require('axios').default;
 const { spawn } = require('child_process');
+const fs = require('fs');
 
+// Convert options
 const options = {
-  cwd: __dirname + '/article',
+  cwd: __dirname + '/../article/',
 };
-const args = [];
-const calibre = spawn('ebook-convert', args, options);
-
-calibre.on('error', (error) => {
-  console.log('Conversion faild! because ' + error.stack)
-})
+// Temprory folder for application
+const tmpDir = '/tmp/ebookConverter/';
 
 /**
  * 
