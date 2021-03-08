@@ -1,6 +1,6 @@
 const Pocket = require('./src/pocket');
 const inquirer = require('inquirer');
-const urlToEpub = require('./src/converter');
+const urlToMobi = require('./src/converter');
 
 const questions = [
   {
@@ -10,37 +10,42 @@ const questions = [
     choices: ['1)Get articles', '2)Send to kindle (WireFull)', '3)Get and send article to kindl'],
   },
 ];
-const outputFolder = '/media/emad/Kindle/documents';
+const outputFolder = __dirname + '/article/';
 
 async function main() {
-  const pocket = await Pocket.build('96126-d71e8b7e2255a5075eb0c83c', 'https://www.google.com');
+  try {
+    const pocket = await Pocket.build('96126-d71e8b7e2255a5075eb0c83c', 'https://www.google.com');
 
-  console.log('Hi, welcome to Node Pocket app');
+    console.log('Hi, welcome to Node Pocket app');
 
-  while(true) {
-    const choice = (await inquirer.prompt(questions)).job[0];
-    
-    if(choice === '1') {
-      let articles = await pocket.getArticle({
-        count: 1,
-        detailType: 'simple',
-      });
+    while(true) {
+      const choice = (await inquirer.prompt(questions)).job[0];
+      
+      if(choice === '1') {
+        let articles = await pocket.getArticle({
+          count: 1,
+          detailType: 'simple',
+        });
 
-      console.log('Articles received!');
+        console.log('Articles received!');
 
-      const converters = []; 
-      let converter;
+        const converters = []; 
 
-      articles = Object.values(articles);
-      articles.forEach(article => {
-      });
+        articles = Object.values(articles);
+        articles.forEach(article => {
+          article.path = outputFolder + article.resolved_title + '.mobi';
+          converters.push(urlToMobi(article.resolved_url, article.path));
+        });
 
-      await Promise.all(converters);
+        await Promise.all(converters);
 
-      console.log('Finished');
-    }else if(choice === '2') {
+        console.log('Finished');
+      }else if(choice === '2') {
 
+      }
     }
+  } catch (error) {
+   console.log(error); 
   }
 }
 
