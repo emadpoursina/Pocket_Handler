@@ -34,6 +34,22 @@ function urlToMobi(url, outputDir = __dirname + '/../article/') {
         }
         return dataStream;
       })
+      // Save data to html file
+      .then((dataStream) => {
+        console.log(2);
+
+        const inputDir = tmpDir + new Date().toString() + '.html';
+
+        dataStream.pipe(fs.createWriteStream(inputDir));
+        dataStream.on('end', () => {
+          console.log('No more data to download.');
+
+          return spawn('ebook-convert', [inputDir, outputDir], options);
+        });
+
+        console.log(inputDir, outputDir);
+        return spawn('ebook-convert', [inputDir, outputDir], options);
+      })
   })
 }
 
