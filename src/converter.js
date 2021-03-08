@@ -59,6 +59,12 @@ function urlToMobi(url, outputDir = __dirname + '/../article/') {
           throw new Error(err);
         })
       })
+      .then((code) => {
+        resolve('Opration ended with code ' + code);
+      })
+      .catch(err => {
+        reject(new Error('Failed to generate Ebook because of ', err));
+      })
   })
 }
 
