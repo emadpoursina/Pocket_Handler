@@ -15,7 +15,7 @@ const tmpDir = '/tmp/ebookConverter/';
  * @param {Object} article 
  * @param {String} outputPath 
  */
-function urlToEpub(url, article, outputDir = __dirname + '/../article/') {
+function urlToMobi(url, article, outputDir = __dirname + '/../article/') {
   return new Promise((resolve, reject) => {
     getWebPage(url)
       .then(data => {
@@ -64,4 +64,4 @@ function getWebPage(url) {
   });
 }
 
-module.exports = urlToEpub;
+module.exports = urlToMobi;
