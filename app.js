@@ -63,9 +63,11 @@ async function main() {
           helper.getWebPages(urls)
             .then(fileDirs => {
               console.log(fileDirs);
+              myEmitter.emit('next');
             })
             .catch(err => {
-              throw new Error(err);
+              console.log(err);
+              myEmitter.emit('next');
             })
           break;
         case '3':
@@ -87,6 +89,7 @@ async function main() {
     } )
   } catch (error) {
    console.log(error); 
+   myEmitter.emit('next');
   }
 }
 
