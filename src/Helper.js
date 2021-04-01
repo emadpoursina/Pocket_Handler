@@ -1,4 +1,6 @@
 const fs = require('fs');
+const urlModule = require('url');
+const axios = require('axios');
 
 class Helper {
   /**
@@ -6,21 +8,28 @@ class Helper {
    * @param {String} url 
    * @returns A readable stream of webpage content
    */
-  getWebPage(url, outputPath = '../article/html') {
+  getWebPage(url, outputDir = '../article/html', fileName) {
     return new Promise((resolve, reject) => {
       axios({
         method: 'get',
         url,
       })
       .then(response => {
+
         const webPageData = response.data;
 
+        if(!fileName) {
+          fileName = (urlModule.parse(url).pathname);
+          fileName = fileName.slice(fileName.lastIndexOf('/')) + '.html';
+        }
         console.log('webPage recived!');
 
-        fs.appendFile(outputPath, webPageData, () => {
-          console.log('Webpage saved.');
+        const filePath = outputDir + fileName;
 
-          resolve(200);
+        fs.appendFile(filePath, webPageData, () => {
+          console.log('Webpage saved');
+
+          resolve(filePath);
         });
       })
       .catch(error => {
@@ -40,7 +49,7 @@ class Helper {
         }
         console.log(error.config.url, error.config.method, error.config.headers, error.config.data);
 
-        reject('Failed getting webPage.');
+        reject(new Error('Failed getting webPage.'));
       });
     });
   }
