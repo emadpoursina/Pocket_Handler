@@ -11,8 +11,7 @@ const rl = readLine.createInterface({
   output: process.stdout
 });
 // Main menu question
-const questions = [
-  {
+const questions = [{
     type: 'rawlist',
     name: 'job',
     message: 'What should I do??',
@@ -22,14 +21,25 @@ const questions = [
       '3)Html to Mobi',
       '4)Send to kindle (wirefull)',
       '5)Send to kindle (wireless)'],
-  },
-];
-const getUrlsQuestion = [{
+}];
+
+const getNeededInfoCase2 = [{
     type: 'input',
     name: 'urls',
     message: 'Enter the urls with \',\' between as divider: \n',
-  }
-];
+},{
+    type: 'confirm',
+    name: 'oneFile',
+    message: 'Do you like to merge all of the webpages into one file?',
+    default: false,
+}];
+
+const getFileNameQuestion = [{
+  type: 'input',
+  name: 'fileName',
+  message: 'What is the fileName?',
+}];
+
 // Where docs will be saved
 const outputFolder = __dirname + '/article/';
 
@@ -56,19 +66,33 @@ async function main() {
           console.log('Finished');
           break;
         case '2':
-          const answer = await inquirer.prompt(getUrlsQuestion);
+          const answers = await inquirer.prompt(getNeededInfoCase2);
 
-          const urls = answer.urls.split(',');
+          const urls = answers.urls.split(',');
           
-          helper.getWebPages(urls)
-            .then(fileDirs => {
-              console.log(fileDirs);
-              myEmitter.emit('next');
-            })
-            .catch(err => {
-              console.log(err);
-              myEmitter.emit('next');
-            })
+          if(answers.oneFile) {
+            const fileName = await inquirer.prompt(getFileNameQuestion);
+
+            helper.getWebPages(urls, undefined, fileName)
+              .then(fileDirs => {
+                console.log(fileDirs);
+                myEmitter.emit('next');
+              })
+              .catch(err => {
+                console.log(err);
+                myEmitter.emit('next');
+              })
+          }else {
+            helper.getWebPages(urls)
+              .then(fileDirs => {
+                console.log(fileDirs);
+                myEmitter.emit('next');
+              })
+              .catch(err => {
+                console.log(err);
+                myEmitter.emit('next');
+              })
+          }
           break;
         case '3':
           // Converted articles
