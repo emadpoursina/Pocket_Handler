@@ -8,11 +8,11 @@ class Helper {
    * Url of the web page
    * @param {String} [outputDir=__dirname/article/html/]
    * Where web page will be saved
-   * @param {String} fileName
+   * @param {String} [fileName=new URL(url).pathname]
    * Name of the last html file
    * @returns {Promise} Resolve the outputDir, Reject errors
    */
-  static #getWebPage(url, outputDir = `${__dirname}/../article/html/`, fileName = new URL(url).pathname) {
+  static #getWebPage(url, outputDir = `${__dirname}/../article/html/`, fileName) {
     return new Promise((resolve, reject) => {
       axios({
         method: 'get',
@@ -20,23 +20,6 @@ class Helper {
       })
       .then(response => {
         const webPageData = response.data;
-
-        if(fileName === '/')
-          // Handle nameless web pages
-          fileName += `Unknown_${new Date().getTime()}`
-
-        // Add extension to webpage
-        fileName += '.html';
-
-        console.log('webPage recived!');
-
-        // Path validation
-        if(outputDir[outputDir.length - 1] === '/' && fileName[0] === '/')
-          fileName = fileName.slice(1);
-        else if(outputDir[outputDir.length - 1] !== '/' && fileName[0] !== '/')
-          outputDir += '/';
-
-        const filePath = outputDir + fileName;
 
         fs.appendFile(filePath, webPageData, (err) => {
           if(err)
@@ -69,19 +52,41 @@ class Helper {
   }
 
   /**
+   * Validate and merge directory with file name
+   * @param {String} directory 
+   * @param {String} fileName 
+   * @returns valid absolute file path
+   */
+  static #fullPath(directory, fileName) {
+    if(fileName === '/' || !fileName)
+      // Handle nameless web pages
+      fileName += `Unknown_${new Date().getTime()}`
+
+    // Path validation
+    if(directory[directory.length - 1] === '/' && fileName[0] === '/')
+      fileName = fileName.slice(1);
+    else if(directory[directory.length - 1] !== '/' && fileName[0] !== '/')
+      directory += '/';
+
+    return directory + fileName;
+  }
+
+  /**
    * Download and save some web page
    * @param {String[]} urls
    * an array of the web pages url
    * @param {String} [outputDir=__dirname/article/html/]
    * Where web page will be saved
+   * @param {String} fileName
+   * For saving all urls in a sinle file
    * @returns {Promise} Resolve the outputDirs, Reject errors
    */
-  getWebPages(urls, outputDir = `${__dirname}/../article/html/`,) {
+  getWebPages(urls, outputDir = `${__dirname}/../article/html/`, fileName) {
     return new Promise((resolve, reject) => {
       const processes = [];
 
       urls.forEach(url => {
-        processes.push(Helper.#getWebPage(url, outputDir));
+        processes.push(Helper.#getWebPage(url, outputDir, fileName));
       });
 
       Promise.all(processes)
