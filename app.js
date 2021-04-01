@@ -21,9 +21,6 @@ const outputFolder = __dirname + '/article/';
 
 async function main() {
   try {
-    //Autherize pocket
-    //const pocket = await Pocket.build('96126-d71e8b7e2255a5075eb0c83c', 'https://www.google.com');
-
     console.log('Hi, welcome to Node Pocket app');
 
     while(true) {
@@ -31,6 +28,9 @@ async function main() {
       
       switch (choice) {
         case '1':
+          //Autherize pocket
+          const pocket = await Pocket.build('96126-d71e8b7e2255a5075eb0c83c', 'https://www.google.com');
+
           // Get articles info from pocket site
           let articles = await pocket.getArticle({
             count: 1,
@@ -38,6 +38,9 @@ async function main() {
           });
           console.log('Articles received!');
 
+          console.log('Finished');
+          break;
+        case '2':
           // Converted articles
           const converters = []; 
 
@@ -48,8 +51,6 @@ async function main() {
             converters.push(urlToMobi(article.resolved_url, article.path));
           });
           await Promise.all(converters);
-
-          console.log('Finished');
           break;
         default:
           console.log('Invalid choice!');
