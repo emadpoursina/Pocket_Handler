@@ -3,7 +3,7 @@ const axios = require('axios');
 
 class Helper {
   /**
-   * 
+   * Download and save a web page
    * @param {String} url 
    * Url of the web page
    * @param {String} outputDir
@@ -12,7 +12,7 @@ class Helper {
    * Name of the last html file
    * @returns {Promise} Resolve the outputDir, Reject errors
    */
-  getWebPage(url, outputDir = '../article/html/', fileName) {
+  static #getWebPage(url, outputDir = '../article/html/', fileName = new URL(url).pathname) {
     return new Promise((resolve, reject) => {
       axios({
         method: 'get',
@@ -21,14 +21,9 @@ class Helper {
       .then(response => {
         const webPageData = response.data;
 
-        // Handle absence of fileName
-        if(!fileName) {
-          fileName = new URL(url).pathname;
-
-          if(fileName === '/')
-            // Handle nameless web pages
-            fileName += `Unknown_${new Date()}`
-        }
+        if(fileName === '/')
+          // Handle nameless web pages
+          fileName += `Unknown_${new Date()}`
 
         // Add extension to webpage
         fileName += '.html';
@@ -77,21 +72,19 @@ class Helper {
    * an array of the web pages url
    * @param {String} [outputDir=../article/html/]
    * Where web page will be saved
-   * @param {String} fileName
-   * Name of the last html file
    * @returns {Promise} Resolve the outputDirs, Reject errors
    */
-  getWebPages(urls, fileName, outputDir = '../article/html/',) {
+  getWebPages(urls, outputDir = '../article/html/',) {
     return new Promise((resolve, reject) => {
       const processes = [];
 
       urls.forEach(url => {
-        ps.push(this.getWebPage(url, outputDir, fileName));
+        processes.push(this.getWebPage(url, outputDir));
       });
 
-      Promise.all(ps)
+      Promise.all(processes)
         .then(values => {
-          console.log('All the webe pages has been downloaded.');
+          console.log('All the web pages has been downloaded.');
           resolve(values);
         })
         .catch((err) => {
