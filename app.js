@@ -71,7 +71,7 @@ async function main() {
           const urls = answers.urls.split(',');
           
           if(answers.oneFile) {
-            const fileName = await inquirer.prompt(getFileNameQuestion);
+            const { fileName } = await inquirer.prompt(getFileNameQuestion);
 
             helper.getWebPages(urls, undefined, fileName)
               .then(fileDirs => {
