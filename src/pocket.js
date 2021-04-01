@@ -8,6 +8,14 @@ class Pocket {
     this.accessToken = accessToken;
   }
 
+  /**
+   * Pocket authentication 
+   * @param {String} consumerKey 
+   * The pocket account consumer key witch you need for authorization
+   * @param {String} redirectUri 
+   * The url that pocket at the end of authorization send you there
+   * @returns An object of type pocket
+   */
   static async build(consumerKey, redirectUri) {
     const requestToken = await obtainRequestToken(consumerKey, redirectUri);
 

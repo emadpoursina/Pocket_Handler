@@ -1,14 +1,16 @@
 const axios = require('axios').default;
 const { spawn } = require('child_process');
-const fs = require('fs');
+const fs = require('fs/promises');
 const helper = require('./Helper');
+const path = require('path');
+const os = require('os');
 
 // Convert options
 const options = {
   cwd: __dirname + '/../article/',
 };
-// Temprory folder for application
-const tmpDir = '/tmp/ebookConverter/';
+
+let count = 0;
 
 /**
  * 
@@ -16,57 +18,52 @@ const tmpDir = '/tmp/ebookConverter/';
  * @param {Object} article 
  * @param {String} outputPath 
  */
-function urlToMobi(url, outputDir = __dirname + '/../article/') {
-  return new Promise((resolve, reject) => {
-    helper.getWebPage(url)
-      // Make tmp folder
-      .then(dataStream => {
-        console.log(1);
+function urlToMobi(url, outputDir = __dirname + '/../article/mobi') {
+  return new Promise(async (resolve, reject) => {
+    // Make tmp folder
+    fs.mkdtemp(path.join(os.tmpdir(), 'convert-'))
+      .then((tmpDir) => {
+        console.log('Folder has been made');
 
-        if (!fs.existsSync(tmpDir)) {
-          fs.mkdir(tmpDir, (err) => {
-            if (err){
-              console.log('Folder creation faild because ' + err);
-              throw new Error('Folder creation faild because ' + err);
-            }
-
-            return dataStream;
-          })
-        }
-        return dataStream;
-      })
-      // Save data to html file
-      .then((dataStream) => {
-        console.log(2);
-
-        const inputDir = tmpDir + new Date().toString() + '.html';
-
-        dataStream.pipe(fs.createWriteStream(inputDir));
-        dataStream.on('end', () => {
-          console.log('No more data to download.');
-
-          return spawn('ebook-convert', [inputDir, outputDir], options);
-        });
-
-        console.log(inputDir, outputDir);
-        return spawn('ebook-convert', [inputDir, outputDir], options);
+        return helper.getWebPage(url, tmpDir);
       })
       // Convert file to mobi
-      .then((calibre) => {
-        console.log(3);
+      .then((filePath) => {
+
+				console.log(1, filePath, outputDir + '/' + count + '.mobi');
+        const calibre = spawn('ebook-convert', [filePath, outputDir + '/' + count + '.mobi'], options);
+				count++;
 
         calibre.on('error', (err) => {
           console.log('Convertion faild: ' + err);
           throw new Error(err);
         })
-      })
-      .then((code) => {
-        resolve('Opration ended with code ' + code);
+
+        calibre.stderr.pipe(process.stdin);
+
+        calibre.on('close', (code) => {
+          //fs.unlink(filePath);
+          resolve(code);
+        })
       })
       .catch(err => {
-        reject(new Error('Failed to generate Ebook because of ', err));
+        reject(new Error(err));
       })
   })
 }
+
+const urls = []; 
+
+const ps = [];
+
+urls.forEach(url => {
+	ps.push(urlToMobi(url));
+});
+
+Promise.all(ps)
+	.then(values => {
+		console.log(values);
+		console.log('finish');
+	});
 
 module.exports = urlToMobi;
