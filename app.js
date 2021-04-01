@@ -1,9 +1,10 @@
 const Pocket = require('./src/pocket');
 const inquirer = require('inquirer');
 const urlToMobi = require('./src/converter');
-const Helper = require('./src/Helper');
+const EventEmittter = require('events');
 
-// Main menue question
+const myEmitter = new EventEmittter();
+// Main menu question
 const questions = [
   {
     type: 'rawlist',
@@ -20,11 +21,12 @@ const questions = [
 // Where docs will be saved
 const outputFolder = __dirname + '/article/';
 
+// main function
 async function main() {
   try {
     console.log('Hi, welcome to Node Pocket app');
 
-    while(true) {
+    myEmitter.on('next', async () => {
       const choice = (await inquirer.prompt(questions)).job[0];
       
       switch (choice) {
@@ -59,10 +61,11 @@ async function main() {
           console.log('Invalid choice!');
           break;
       }
-    }
+    } )
   } catch (error) {
    console.log(error); 
   }
 }
 
 main();
+myEmitter.emit('next');
