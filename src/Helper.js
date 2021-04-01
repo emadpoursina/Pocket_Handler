@@ -14,6 +14,20 @@ class Helper {
    */
   static #getWebPage(url, outputDir = `${__dirname}/../article/html/`, fileName) {
     return new Promise((resolve, reject) => {
+      // true if fileName has not been passed to function or not
+      let flag = false;
+
+      if(!fileName) {
+        fileName = new URL(url).pathname
+        flag = true;
+      }
+
+      // Add extension to webpage
+      const filePath = Helper.#fullPath(outputDir, fileName) + '.html';
+
+      if(fs.existsSync(filePath) && !flag)
+        reject('File exists!');
+      
       axios({
         method: 'get',
         url,
