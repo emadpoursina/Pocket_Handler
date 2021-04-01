@@ -52,18 +52,4 @@ function urlToMobi(url, outputDir = __dirname + '/../article/mobi') {
   })
 }
 
-const urls = []; 
-
-const ps = [];
-
-urls.forEach(url => {
-	ps.push(urlToMobi(url));
-});
-
-Promise.all(ps)
-	.then(values => {
-		console.log(values);
-		console.log('finish');
-	});
-
 module.exports = urlToMobi;
