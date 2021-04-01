@@ -70,6 +70,35 @@ class Helper {
       });
     });
   }
+
+  /**
+   * Download and save some web page
+   * @param {String[]} urls
+   * an array of the web pages url
+   * @param {String} [outputDir=../article/html/]
+   * Where web page will be saved
+   * @param {String} fileName
+   * Name of the last html file
+   * @returns {Promise} Resolve the outputDirs, Reject errors
+   */
+  getWebPages(urls, fileName, outputDir = '../article/html/',) {
+    return new Promise((resolve, reject) => {
+      const processes = [];
+
+      urls.forEach(url => {
+        ps.push(this.getWebPage(url, outputDir, fileName));
+      });
+
+      Promise.all(ps)
+        .then(values => {
+          console.log('All the webe pages has been downloaded.');
+          resolve(values);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    })
+  }
 }
 
 module.exports = new Helper();
