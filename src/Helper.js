@@ -6,13 +6,13 @@ class Helper {
    * Download and save a web page
    * @param {String} url 
    * Url of the web page
-   * @param {String} outputDir
+   * @param {String} [outputDir=__dirname/article/html/]
    * Where web page will be saved
    * @param {String} fileName
    * Name of the last html file
    * @returns {Promise} Resolve the outputDir, Reject errors
    */
-  static #getWebPage(url, outputDir = '../article/html/', fileName = new URL(url).pathname) {
+  static #getWebPage(url, outputDir = `${__dirname}/../article/html/`, fileName = new URL(url).pathname) {
     return new Promise((resolve, reject) => {
       axios({
         method: 'get',
@@ -23,7 +23,7 @@ class Helper {
 
         if(fileName === '/')
           // Handle nameless web pages
-          fileName += `Unknown_${new Date()}`
+          fileName += `Unknown_${new Date().getTime()}`
 
         // Add extension to webpage
         fileName += '.html';
@@ -31,16 +31,18 @@ class Helper {
         console.log('webPage recived!');
 
         // Path validation
-        if(outputDir[outputDir.length] === '/' && fileName[0] === '/')
-          fileName = fileName.slice('/');
-        else if(outputDir[outputDir.length] !== '/' && fileName[0] !== '/')
+        if(outputDir[outputDir.length - 1] === '/' && fileName[0] === '/')
+          fileName = fileName.slice(1);
+        else if(outputDir[outputDir.length - 1] !== '/' && fileName[0] !== '/')
           outputDir += '/';
 
         const filePath = outputDir + fileName;
 
-        fs.appendFile(filePath, webPageData, () => {
-          console.log('Webpage saved');
+        fs.appendFile(filePath, webPageData, (err) => {
+          if(err)
+            reject(err);
 
+          console.log('Webpage saved');
           resolve(filePath);
         });
       })
@@ -70,16 +72,16 @@ class Helper {
    * Download and save some web page
    * @param {String[]} urls
    * an array of the web pages url
-   * @param {String} [outputDir=../article/html/]
+   * @param {String} [outputDir=__dirname/article/html/]
    * Where web page will be saved
    * @returns {Promise} Resolve the outputDirs, Reject errors
    */
-  getWebPages(urls, outputDir = '../article/html/',) {
+  getWebPages(urls, outputDir = `${__dirname}/../article/html/`,) {
     return new Promise((resolve, reject) => {
       const processes = [];
 
       urls.forEach(url => {
-        processes.push(this.getWebPage(url, outputDir));
+        processes.push(Helper.#getWebPage(url, outputDir));
       });
 
       Promise.all(processes)
