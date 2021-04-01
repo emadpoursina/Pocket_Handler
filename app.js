@@ -59,7 +59,6 @@ async function main() {
           const answer = await inquirer.prompt(getUrlsQuestion);
 
           const urls = answer.urls.split(',');
-          console.log(1, urls);
           
           helper.getWebPages(urls)
             .then(fileDirs => {
@@ -93,3 +92,6 @@ async function main() {
 
 main();
 myEmitter.emit('next');
+
+// Keep process running
+setInterval(() => {}, 1 << 30);
