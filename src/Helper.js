@@ -1,5 +1,4 @@
 const fs = require('fs');
-const urlModule = require('url');
 const axios = require('axios');
 
 class Helper {
@@ -13,21 +12,34 @@ class Helper {
    * Name of the last html file
    * @returns {Promise} Resolve the outputDir, Reject errors
    */
-  getWebPage(url, outputDir = '../article/html', fileName) {
+  getWebPage(url, outputDir = '../article/html/', fileName) {
     return new Promise((resolve, reject) => {
       axios({
         method: 'get',
         url,
       })
       .then(response => {
-
         const webPageData = response.data;
 
+        // Handle absence of fileName
         if(!fileName) {
-          fileName = (urlModule.parse(url).pathname);
-          fileName = fileName.slice(fileName.lastIndexOf('/')) + '.html';
+          fileName = new URL(url).pathname;
+
+          if(fileName === '/')
+            // Handle nameless web pages
+            fileName += `Unknown_${new Date()}`
         }
+
+        // Add extension to webpage
+        fileName += '.html';
+
         console.log('webPage recived!');
+
+        // Path validation
+        if(outputDir[outputDir.length] === '/' && fileName[0] === '/')
+          fileName = fileName.slice('/');
+        else if(outputDir[outputDir.length] !== '/' && fileName[0] !== '/')
+          outputDir += '/';
 
         const filePath = outputDir + fileName;
 
