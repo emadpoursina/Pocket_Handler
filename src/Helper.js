@@ -6,7 +6,12 @@ class Helper {
   /**
    * 
    * @param {String} url 
-   * @returns A readable stream of webpage content
+   * Url of the web page
+   * @param {String} outputDir
+   * Where web page will be saved
+   * @param {String} fileName
+   * Name of the last html file
+   * @returns {Promise} Resolve the outputDir, Reject errors
    */
   getWebPage(url, outputDir = '../article/html', fileName) {
     return new Promise((resolve, reject) => {
