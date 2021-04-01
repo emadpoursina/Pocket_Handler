@@ -10,10 +10,11 @@ const questions = [
     name: 'job',
     message: 'What should I do??',
     choices: [
-      '1)Get articles',
-      '2)Html to Mobi',
-      '3)Send to kindle (wirefull)',
-      '4)Send to kindle (wireless)'],
+      '1)Get articles from pocket',
+      '2)Get articles from list of urls',
+      '3)Html to Mobi',
+      '4)Send to kindle (wirefull)',
+      '5)Send to kindle (wireless)'],
   },
 ];
 // Where docs will be saved
@@ -41,6 +42,8 @@ async function main() {
           console.log('Finished');
           break;
         case '2':
+          break;
+        case '3':
           // Converted articles
           const converters = []; 
 
