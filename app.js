@@ -1,9 +1,15 @@
 const Pocket = require('./src/pocket');
 const inquirer = require('inquirer');
 const urlToMobi = require('./src/converter');
+const helper = require('./src/Helper');
+const readLine = require('readline');
 const EventEmittter = require('events');
 
 const myEmitter = new EventEmittter();
+const rl = readLine.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 // Main menu question
 const questions = [
   {
@@ -17,6 +23,12 @@ const questions = [
       '4)Send to kindle (wirefull)',
       '5)Send to kindle (wireless)'],
   },
+];
+const getUrlsQuestion = [{
+    type: 'input',
+    name: 'urls',
+    message: 'Enter the urls with \',\' between as divider: \n',
+  }
 ];
 // Where docs will be saved
 const outputFolder = __dirname + '/article/';
@@ -44,6 +56,18 @@ async function main() {
           console.log('Finished');
           break;
         case '2':
+          const answer = await inquirer.prompt(getUrlsQuestion);
+
+          const urls = answer.urls.split(',');
+          console.log(1, urls);
+          
+          helper.getWebPages(urls)
+            .then(fileDirs => {
+              console.log(fileDirs);
+            })
+            .catch(err => {
+              throw new Error(err);
+            })
           break;
         case '3':
           // Converted articles
